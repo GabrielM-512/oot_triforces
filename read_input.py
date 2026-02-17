@@ -6,35 +6,45 @@ changing a description. It is not needed for executing the project.
 import csv
 
 filename = "triforces.csv"
+def main():
+    with open(filename, newline='') as csvfile:
+        reader = csv.reader(csvfile)
 
-with open(filename, newline='') as csvfile:
-    reader = csv.reader(csvfile)
+        total = 0
 
-    total = 0
+        data = {}
 
-    data = {}
+        for row in reader:
 
-    for row in reader:
-        total += int(row[0])
+            count = int(row[0])
+            scene = row[1]
+            description = row[2]
 
-        if row[1] not in data:
-            data[row[1]] = [0]
+            total += count
 
-        data[row[1]][0] += int(row[0])
-        data[row[1]].append([row[1], int(row[0])])
+            if scene not in data:
+                data[scene] = [0]
 
-    keys = list(data.keys())
+            data[scene][0] += count
+            data[scene].append([description, count])
 
-    for i in range(len(keys)):
-        for j in range(len(keys) - i - 1):
-            if keys[j] > keys[j + 1]:
-                keys[j], keys[j + 1] = keys[j + 1], keys[j]
 
-    overwrite = {"total": total}
+        # I want the scenes sorted alphabetically, so we do all this
+        keys = list(data.keys())
 
-    for i in keys:
-        overwrite[i] = data[i]
+        for i in range(len(keys)):
+            for j in range(len(keys) - i - 1):
+                if keys[j] > keys[j + 1]:
+                    keys[j], keys[j + 1] = keys[j + 1], keys[j]
 
-    data = overwrite
+        overwrite = {"total": total}
 
-    print(data)
+        for i in keys:
+            overwrite[i] = data[i]
+
+        data = overwrite
+
+        print(data)
+
+if __name__ == "__main__":
+    main()
