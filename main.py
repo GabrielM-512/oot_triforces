@@ -1,5 +1,10 @@
-data = {'total': 484, 'BotW': [1, ['ZL spot back', 1]], 'CS': [9, ['Intro/Zelda Escape CS Horse', 1], ['Deku Tree exposition CS', 1], ['child Zelda exposition CS', 1], ['Chamber of Sages floor', 1], ['LACS exposition', 1], ['Sheik is Zelda???', 1], ['Before Ganondorf fight on hands', 3]], 'Colossus': [1, ['Requiem Warp Pad', 1]], 'Courtyard': [11, ['Above Window to Throneroom', 1], ['Above Arch to Guards', 1], ['Throneroom Guards', 6], ['Guard behind Window', 3]], 'DMC': [1, ['Bolero Warp Pad', 1]], 'Forest Temple': [7, ['Phantom Ganon Arena', 7]], 'Ganon Fight': [1, ['Ganondorf -> Ganon transformation', 1]], 'Ganons Castle': [189, ['Entrance Stone Pillars', 48], ['Sage rooms pillars', 112], ['Light trial Lullaby spot', 1], ['Pillars in Tower Collapse before exit', 28]], 'Goron City': [18, ["Darunia's room banners", 18]], 'Graveyard': [20, ['On graves', 17], ['Suns song stone', 1], ["In front of Sun's Song stone", 1], ['Nocturne Warp Pad', 1]], 'Great Fairy Fountains': [6, ['', 6]], 'Guards Section': [56, ['Guards', 54], ['Big Statue', 1], ['Above Arch to courtyard', 1]], 'Hyrule Castle': [71, ['Guards', 70], ['Above crawlspace', 1]], 'Hyrule Field': [1, ['Above Castle Town drawbridge', 1]], 'Item': [8, ["Zelda's Letter Model", 1], ['Hylian shield', 1], ['Medallions', 6]], 'Kakariko': [21, ['Guards', 21]], 'Lake Hylia': [2, ['Grave between bridges', 1], ['Serenade Warp Pad', 1]], "Lots o' Pots": [9, ['Guard', 7], ['Adult back wall', 1], ["Poe guy's robe", 1]], 'Market': [22, ['Guards at night', 14], ['Guard in Back Alley after escape', 7], ['Above ToT entrance', 1]], 'Market Entrance': [7, ['Guard', 7]], 'Miscellaneous': [1, ['Quest Status Screen', 1]], 'NPC': [10, ['Child Zelda Hat', 1], ['Child Zelda Dress', 1], ['Rauru Robe', 1], ['Rauru Forehead', 1], ["Epona's Saddle", 2], ['Adult Zelda Earrings', 2], ['Adult Zelda Dress', 2]], 'Royal Family Tomb': [1, ["Above Sun's Song stone", 1]], 'SFM': [1, ['Minuet Warp Pad', 1]], 'Shadow Temple': [1, ['Boat', 1]], 'Spirit Temple': [2, ['Main room Statue left hand', 1], ['In front of BK room', 1]], 'Temple of Time': [4, ['Prelude Warp Pad', 1], ['Above DoT', 1], ['Master Sword Pedestal', 1], ['Master Sword Stone', 1]], 'Water Temple': [3, ['ZL spots', 3]]}
+from urllib.request import urlopen
+import csv
+
+data = {}
 max_scene_name_length = 0
+
+url = "https://raw.githubusercontent.com/GabrielM-512/oot_triforces/refs/heads/main/triforces.csv"
 
 help_prompt = ("This tool lets you explore which scene contains how many Triforces in 'The Legend of Zelda: Ocarina of Time'.\n"
                "To do so, simply type the scene's name as listed above (or using the 'list' command).\n"
@@ -121,5 +126,53 @@ def print_scene(scene: list):
     for place in range(1, len(scene)):
         print("\t" + scene[place][0] + ": " + str(scene[place][1]))
 
+def get_data():
+    global data
+
+    with urlopen(url) as response:
+        body = response.read().decode("utf-8").splitlines()
+
+    reader = csv.reader(body)
+
+    total = 0
+    data = {}
+
+    for row in reader:
+
+        count = int(row[0])
+        scene = row[1]
+        description = row[2]
+
+        total += count
+
+        if scene not in data:
+            data[scene] = [0]
+
+        data[scene][0] += count
+        data[scene].append([description, count])
+
+
+    # I want the scenes sorted alphabetically, so we do all this
+    keys = list(data.keys())
+
+    for i in range(len(keys)):
+        for j in range(len(keys) - i - 1):
+            if keys[j] > keys[j + 1]:
+                keys[j], keys[j + 1] = keys[j + 1], keys[j]
+
+    overwrite = {"total": total}
+
+    for i in keys:
+        overwrite[i] = data[i]
+
+    data = overwrite
+
 if __name__ == "__main__":
+    try:
+        get_data()
+    except Exception as e:
+        print("Error while getting data: " + str(e))
+        print("Try again later or look at the data yourself at " + url)
+        exit(1)
+
     main()
