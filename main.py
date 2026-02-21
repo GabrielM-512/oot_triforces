@@ -24,6 +24,14 @@ help_prompt = ("This tool lets you explore which scene contains how many Triforc
 
 def main():
     global max_scene_name_length, data
+
+    try:
+        get_data()
+    except Exception as e:
+        print("Error while getting data: " + str(e))
+        print("Try again later or look at the data yourself at " + url)
+        exit(1)
+
     for scene in data.keys():
         if len(scene) > max_scene_name_length:
             max_scene_name_length = len(scene)
@@ -38,33 +46,33 @@ def main():
     previous = "global"
 
     while True:
-        next = input("> ").strip()
+        request = input("> ").strip()
 
-        if next == "exit" or next == "end":
+        if request == "exit" or request == "end":
             break
 
-        if next == "help":
+        if request == "help":
             print(help_prompt)
             continue
 
-        if next == "total":
+        if request == "total":
             print(str(data['total']) + " Triforces")
             continue
 
-        if next == "list":
+        if request == "list":
             print_global()
             previous = 'global'
             continue
 
-        if next == "sorted":
+        if request == "sorted":
             print_sorted(previous)
             continue
 
         try:
-            print_scene(data[next])
-            previous = next
+            print_scene(data[request])
+            previous = request
         except KeyError:
-            print("Unknown scene or command: '" + next + "'")
+            print("Unknown scene or command: '" + request + "'")
 
 def print_global():
     for scene in data.keys():
@@ -168,11 +176,4 @@ def get_data():
     data = overwrite
 
 if __name__ == "__main__":
-    try:
-        get_data()
-    except Exception as e:
-        print("Error while getting data: " + str(e))
-        print("Try again later or look at the data yourself at " + url)
-        exit(1)
-
     main()
