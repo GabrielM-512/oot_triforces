@@ -12,7 +12,7 @@ help_prompt = ("This tool lets you explore which scene contains how many Triforc
                "I only counted something as a Triforce if it was explicitly one. Colours don't matter, but it should look like it was meant to be a Triforce (so this includes Rauru's Forehead).\n"
                "I also didn't count the number of Triforce textures in the game files, but the number of Triforces that are logically distinct in the game. For example, this means that the Triforce above ToT entrance from ToT and Market scenes count as 1, but each guard counts a separate 7.\n"
                "This is somewhat arbitrary, but it's what I decided on.\n"
-               "If I were to bet on whether this list is complete, I would easily bet 100€ on no, so don't assume it is. However, I didn't find a better count, so take it or leave it.\n"
+               "If I were to bet on whether this list is complete, I would easily bet 100€ on no, so don't assume it is (note: it wasn't). However, I didn't find a better count, so take it or leave it.\n"
                "If you find a Triforce that isn't included here or have another question, DM me on Discord (Grootmaster47) or create an Issue on the github page (https://github.com/GabrielM-512/oot_triforces/issues)\n\n"
                ""
                "Commands:\n"
@@ -38,7 +38,7 @@ def main():
     previous = "global"
 
     while True:
-        next = input("> ")
+        next = input("> ").strip()
 
         if next == "exit" or next == "end":
             break
