@@ -46,7 +46,7 @@ def main():
     previous = "global"
 
     while True:
-        request = input("> ").strip()
+        request = input("> ").strip().lower()
 
         if request == "exit" or request == "end":
             break
@@ -69,8 +69,13 @@ def main():
             continue
 
         try:
-            print_scene(data[request])
-            previous = request
+            for scene in data:
+                if scene == "total": continue
+                if scene.lower() == request:
+                    print_scene(data[scene])
+                    previous = scene
+                    break
+
         except KeyError:
             print("Unknown scene or command: '" + request + "'")
 
