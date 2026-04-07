@@ -46,7 +46,10 @@ def main():
     previous = "global"
 
     while True:
-        request = input("> ").strip().lower()
+        try:
+            request = input("> ").strip().lower()
+        except KeyboardInterrupt, EOFError:
+            exit(0)
 
         if request == "exit" or request == "end":
             break
@@ -68,15 +71,16 @@ def main():
             print_sorted(previous)
             continue
 
-        try:
-            for scene in data:
-                if scene == "total": continue
-                if scene.lower() == request:
-                    print_scene(data[scene])
-                    previous = scene
-                    break
+        completed = False
 
-        except KeyError:
+        for scene in data:
+            if scene.lower() == request:
+                print_scene(data[scene])
+                previous = scene
+                completed = True
+                break
+
+        if not completed:
             print("Unknown scene or command: '" + request + "'")
 
 def print_global():
